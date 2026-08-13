@@ -118,7 +118,7 @@ export function OpenBook({
               <ol className="mt-4 space-y-3">
                 {Array.from({ length: FACT_SLOTS }).map((_, i) => (
                   <li key={i} className="flex items-baseline gap-3">
-                    <span className="font-mono text-xs text-black/35">
+                    <span className="font-display text-xs text-black/40">
                       {i + 1}
                     </span>
                     <input

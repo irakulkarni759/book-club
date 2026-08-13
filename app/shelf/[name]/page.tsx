@@ -26,13 +26,13 @@ export default async function ShelfPage({
     <main className="mx-auto w-full max-w-4xl px-6 pt-10 pb-32">
       <Link
         href="/"
-        className="font-mono text-xs text-paper-dim hover:text-paper"
+        className="font-display text-sm text-chalk-dim hover:text-chalk"
       >
         &larr; all shelves
       </Link>
 
-      <h1 className="mt-6 font-display text-5xl lowercase">{member.name}</h1>
-      <p className="mt-2 text-sm text-paper-dim">
+      <h1 className="chalk mt-6 font-display text-5xl lowercase">{member.name}</h1>
+      <p className="chalk mt-2 font-display text-base text-chalk-dim">
         open a book and tell us why you love it
       </p>
 

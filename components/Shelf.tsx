@@ -3,10 +3,10 @@ import Link from "next/link";
 type Book = { id: string; title: string };
 
 // Deterministic variation so a shelf looks like real books rather than a
-// bar chart. Same book always gets the same size.
+// bar chart. The same book always gets the same size and paper.
 const WIDTHS = [58, 74, 50, 66, 54, 80, 62];
 const HEIGHTS = [94, 82, 100, 88, 78, 96, 86];
-const TONES = ["spine", "spine-b", "spine-c"];
+const PAPERS = ["spine-bone", "spine-cream", "spine-oat", "spine-linen"];
 
 export function Shelf({
   name,
@@ -25,10 +25,10 @@ export function Shelf({
   return (
     <Link
       href={`/shelf/${name.toLowerCase()}`}
-      className="group flex min-h-0 w-full flex-1 flex-col justify-end rounded-lg px-2 transition-colors hover:bg-ink-raised"
+      className="group flex min-h-0 w-full flex-1 flex-col justify-end rounded-lg px-2 transition-colors hover:bg-board-deep"
     >
-      {/* Books at one end, the name standing at the other, both on the
-          shelf line. This is what fills the width. */}
+      {/* Books at one end, the name chalked at the other, both sitting on
+          the ledge. This is what makes the full width feel used. */}
       <div
         className={`flex min-h-0 flex-1 items-end gap-1.5 ${
           right ? "flex-row-reverse" : ""
@@ -38,10 +38,10 @@ export function Shelf({
           <div
             key={book.id}
             title={book.title}
-            className={`${TONES[i % 3]} flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
+            className={`${PAPERS[i % 4]} flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
             style={{ width: WIDTHS[i % 7], height: `${HEIGHTS[i % 7]}%` }}
           >
-            <span className="spine-title max-h-full truncate text-[13px] font-semibold tracking-tight">
+            <span className="spine-title max-h-full truncate font-display text-sm">
               {book.title}
             </span>
           </div>
@@ -61,7 +61,7 @@ export function Shelf({
           );
         })}
 
-        {/* Pushes the name to the far end of the plank. */}
+        {/* Pushes the name to the far end of the ledge. */}
         <div className="min-w-6 flex-1" />
 
         <div
@@ -69,16 +69,16 @@ export function Shelf({
             right ? "flex-row-reverse" : ""
           }`}
         >
-          <h2 className="font-display text-2xl leading-none text-paper transition-opacity group-hover:opacity-100 opacity-85">
+          <h2 className="chalk font-display text-2xl leading-none opacity-90 transition-opacity group-hover:opacity-100">
             {name}
           </h2>
-          <span className="font-mono text-[10px] text-paper-dim">
+          <span className="font-display text-xs text-chalk-dim">
             {books.length}/{slots}
           </span>
         </div>
       </div>
 
-      <div className="shelf-plank mt-1.5 h-2 w-full shrink-0 rounded-sm" />
+      <div className="shelf-ledge mt-1.5 h-2.5 w-full shrink-0 rounded-[2px]" />
     </Link>
   );
 }

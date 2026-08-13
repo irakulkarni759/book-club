@@ -11,12 +11,11 @@ export type Book = {
 };
 
 const SLOTS = 5;
-const WORDS = ["none", "one", "two", "three", "four", "five"];
 
-// Same sizing and tone cycle as the shelf wall, so a book looks like the
+// Same sizing and paper cycle as the shelf wall, so a book looks like the
 // same object in both places.
 const WIDTHS = [58, 74, 50, 66, 54, 80, 62];
-const TONES = ["spine", "spine-b", "spine-c"];
+const PAPERS = ["spine-bone", "spine-cream", "spine-oat", "spine-linen"];
 
 export function ShelfRoom({
   memberId,
@@ -44,14 +43,14 @@ export function ShelfRoom({
             aria-label={book ? `Open ${book.title}` : "Add a book"}
             className={`group flex items-center justify-center overflow-hidden rounded-[3px] py-4 transition-all duration-300 hover:-translate-y-2 ${
               book
-                ? `${TONES[i % 3]} h-56`
+                ? `${PAPERS[i % 4]} h-56`
                 : "spine-blank h-44 opacity-70 hover:opacity-100"
             }`}
             style={{ width: WIDTHS[i % 7] }}
           >
             {/* Titles run down the spine, the way they do on a real book. */}
             {book && (
-              <span className="spine-title max-h-full truncate text-sm font-semibold tracking-tight">
+              <span className="spine-title max-h-full truncate font-display text-base">
                 {book.title}
               </span>
             )}
@@ -59,13 +58,12 @@ export function ShelfRoom({
         ))}
       </div>
 
-      <div className="shelf-plank mt-1.5 h-2 w-full rounded-sm" />
+      <div className="shelf-ledge mt-1.5 h-2.5 w-full rounded-[2px]" />
 
-      {/* Milkyway has no digits, so counts are spelled out here. */}
-      <p className="mt-6 text-sm text-paper-dim">
+      <p className="mt-6 font-display text-base text-chalk-dim">
         {books.length >= SLOTS
-          ? "shelf is full but you can always add more"
-          : `${WORDS[SLOTS - books.length]} more to go`}
+          ? "shelf is full, but you can always add more"
+          : `${SLOTS - books.length} more to go`}
       </p>
 
       {openIndex !== null && (

@@ -1,133 +1,132 @@
 @import "tailwindcss";
 
-/* Milkyway Demo by Ragamkata Studio, free for personal use.
-   The display face: the wordmark and member names.
-   WARNING: this demo has 56 glyphs, letters and space only. No digits,
-   no punctuation. Never use it for body text. */
+/* School Club by 1001fonts, Free For Personal Use license.
+   Full character set, so it can carry headings, labels and counts. */
 @font-face {
-  font-family: "Milkyway";
-  src: url("/fonts/Milkyway.woff2") format("woff2");
+  font-family: "SchoolClub";
+  src: url("/fonts/SchoolClub.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 
 /* ---------------------------------------------------------------
    DESIGN TOKENS
-   Every color and font in the app is named here, once. Components
-   refer to the names, never to raw hex values. Change a value here
-   and the whole app changes with it.
+   A chalkboard, not a black void. Every colour is named here once;
+   components use the names, never raw hex.
    --------------------------------------------------------------- */
 :root {
-  --ink: #08080a; /* page background, near black so chrome pops */
-  --ink-raised: #101014; /* cards and panels, one step lighter */
-  --paper: #e9e5dd; /* primary text, warm off-white */
-  --paper-dim: #8b877f; /* secondary text, labels */
-  --edge: #23232a; /* hairline borders */
-  --brass: #c9a227; /* wine debt, warnings, the one warm accent */
+  --board: #1e2a26; /* slate green chalkboard */
+  --board-deep: #16201d; /* recessed panels, the gap behind shelves */
+  --chalk: #f0ece0; /* chalk white, warm, never stark */
+  --chalk-dim: #9aa79f; /* faded chalk, labels and secondary text */
+  --edge: #2c3a35; /* hairline rules */
+  --ledge: #6f5638; /* the wooden shelf the books stand on */
+  --ledge-lit: #a07f56; /* its lit top edge */
+  --coral: #e8785c; /* shots owed, deadlines, the one warm alarm */
 }
 
 @theme inline {
-  --color-ink: var(--ink);
-  --color-ink-raised: var(--ink-raised);
-  --color-paper: var(--paper);
-  --color-paper-dim: var(--paper-dim);
+  --color-board: var(--board);
+  --color-board-deep: var(--board-deep);
+  --color-chalk: var(--chalk);
+  --color-chalk-dim: var(--chalk-dim);
   --color-edge: var(--edge);
-  --color-brass: var(--brass);
+  --color-ledge: var(--ledge);
+  --color-coral: var(--coral);
 
   --font-sans: var(--font-geist-sans);
-  --font-display: "Milkyway", sans-serif;
+  --font-display: "SchoolClub", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--ink);
-  color: var(--paper);
+  color: var(--chalk);
+  background-color: var(--board);
+  /* Chalk dust: a few soft smudges so the board is not flat colour. */
+  background-image:
+    radial-gradient(
+      70% 50% at 20% 0%,
+      rgba(240, 236, 224, 0.07) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      50% 40% at 85% 25%,
+      rgba(240, 236, 224, 0.05) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      60% 45% at 50% 100%,
+      rgba(0, 0, 0, 0.35) 0%,
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+
+/* Chalk lettering: soft, slightly bloomed, never a crisp print edge. */
+.chalk {
+  color: var(--chalk);
+  text-shadow:
+    0 0 1px rgba(240, 236, 224, 0.55),
+    0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 /* ---------------------------------------------------------------
    BOOK SPINES
-   A spine is a CSS gradient, not a shader. Twenty WebGL canvases
-   would break the page, so spines fake the metal and the real
-   shader is saved for the few hero moments.
+   Paper, not metal. Off-whites and warm neutrals, never stark white.
    --------------------------------------------------------------- */
-.spine {
-  background: linear-gradient(
-    100deg,
-    #2a2a30 0%,
-    #6e6e78 18%,
-    #d6d6de 34%,
-    #8a8a94 46%,
-    #3a3a42 62%,
-    #9a9aa4 78%,
-    #4a4a52 100%
-  );
+.spine-bone,
+.spine-cream,
+.spine-oat,
+.spine-linen {
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
-    0 10px 22px -8px rgba(0, 0, 0, 0.9);
+    inset -3px 0 6px -3px rgba(0, 0, 0, 0.4),
+    inset 2px 0 0 rgba(255, 255, 255, 0.5),
+    0 10px 18px -10px rgba(0, 0, 0, 0.85);
 }
 
-/* Titles run down the spine the way they do on a real book. Dark ink on
-   bright metal, with a faint light edge so it stays legible wherever the
-   gradient goes dark. */
+.spine-bone {
+  background: linear-gradient(96deg, #efe9dc 0%, #e4ddcc 55%, #d8d0bd 100%);
+}
+.spine-cream {
+  background: linear-gradient(96deg, #f4ecd8 0%, #ebe1c8 55%, #ded3b7 100%);
+}
+.spine-oat {
+  background: linear-gradient(96deg, #e8e2d2 0%, #dcd4c0 55%, #cec5ae 100%);
+}
+.spine-linen {
+  background: linear-gradient(96deg, #f1efe6 0%, #e6e3d6 55%, #d9d5c6 100%);
+}
+
+/* An unwritten book: chalk outline on the board, waiting to be filled. */
+.spine-blank {
+  background: rgba(240, 236, 224, 0.05);
+  border: 1.5px dashed rgba(240, 236, 224, 0.28);
+  box-shadow: inset 0 0 24px rgba(240, 236, 224, 0.04);
+}
+
+/* Titles run down the spine, written on the paper. */
 .spine-title {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  color: #14141a;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: #2a2620;
 }
 
-/* Two more tones so a row of books is not one repeated object. */
-.spine-b {
+/* The wooden ledge the books stand on. */
+.shelf-ledge {
   background: linear-gradient(
-    95deg,
-    #23232a 0%,
-    #585866 20%,
-    #b8b8c6 38%,
-    #6a6a78 52%,
-    #2e2e38 70%,
-    #8e8e9e 88%,
-    #3a3a44 100%
+    180deg,
+    var(--ledge-lit) 0%,
+    var(--ledge) 35%,
+    #4a3823 80%,
+    #33261a 100%
   );
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
-    0 10px 22px -8px rgba(0, 0, 0, 0.9);
-}
-
-.spine-c {
-  background: linear-gradient(
-    105deg,
-    #32323a 0%,
-    #8a8a96 22%,
-    #e2e2ea 40%,
-    #9a9aa8 56%,
-    #45454f 74%,
-    #adadbb 90%,
-    #3d3d46 100%
-  );
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.11),
-    0 10px 22px -8px rgba(0, 0, 0, 0.9);
-}
-
-/* An untitled book: same metal, drained of contrast, waiting. */
-.spine-blank {
-  background: linear-gradient(
-    100deg,
-    #1e1e24 0%,
-    #33333c 26%,
-    #4c4c58 48%,
-    #2e2e37 72%,
-    #1a1a20 100%
-  );
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 8px 18px -8px rgba(0, 0, 0, 0.9);
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 12px 22px -12px rgba(0, 0, 0, 1);
 }
 
 /* ---------------------------------------------------------------
    THE OPEN BOOK
-   A spread is two paper pages with a shadowed gutter between them,
-   tilted in 3D so you see it as an object rather than a form.
    --------------------------------------------------------------- */
 .book-stage {
   perspective: 2200px;
@@ -138,9 +137,58 @@ body {
   transform: rotateX(9deg);
 }
 
-/* Opening and closing are CSS animations, not JS-timed transitions.
-   requestAnimationFrame does not fire in a background tab, which left the
-   book stuck shut. An animation always plays. */
+.page {
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(255, 255, 255, 0.7) 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, #f6f1e4 0%, #e9e2d0 100%);
+  color: #26221b;
+}
+
+.page-left {
+  box-shadow: inset -22px 0 28px -22px rgba(0, 0, 0, 0.75);
+  border-radius: 3px 0 0 3px;
+}
+.page-right {
+  box-shadow: inset 22px 0 28px -22px rgba(0, 0, 0, 0.75);
+  border-radius: 0 3px 3px 0;
+}
+
+.book-gutter {
+  background: linear-gradient(
+    90deg,
+    #cbc2ab 0%,
+    #8a7f66 35%,
+    #4e4636 50%,
+    #8a7f66 65%,
+    #cbc2ab 100%
+  );
+}
+
+.page-edges-left {
+  background: repeating-linear-gradient(
+    90deg,
+    #d5ccb6 0px,
+    #d5ccb6 1px,
+    #f0ead9 1px,
+    #f0ead9 3px
+  );
+}
+.page-edges-right {
+  background: repeating-linear-gradient(
+    90deg,
+    #f0ead9 0px,
+    #f0ead9 2px,
+    #d5ccb6 2px,
+    #d5ccb6 3px
+  );
+}
+
+/* Opening and closing are CSS animations so they never depend on
+   requestAnimationFrame, which does not fire in a background tab. */
 @keyframes book-open {
   from {
     transform: rotateX(9deg) scaleX(0.07);
@@ -192,70 +240,4 @@ body {
   .veil-out {
     animation-duration: 1ms;
   }
-}
-
-.page {
-  background:
-    radial-gradient(
-      120% 90% at 50% 0%,
-      rgba(255, 255, 255, 0.7) 0%,
-      transparent 60%
-    ),
-    linear-gradient(180deg, #f2efe8 0%, #e4e0d6 100%);
-  color: #1a1814;
-}
-
-/* The crease. Darkens the inner edge of each page toward the spine. */
-.page-left {
-  box-shadow: inset -22px 0 28px -22px rgba(0, 0, 0, 0.75);
-  border-radius: 3px 0 0 3px;
-}
-.page-right {
-  box-shadow: inset 22px 0 28px -22px rgba(0, 0, 0, 0.75);
-  border-radius: 0 3px 3px 0;
-}
-
-/* The spine itself, standing between the two pages. */
-.book-gutter {
-  background: linear-gradient(
-    90deg,
-    #b9b4a8 0%,
-    #6f6b62 35%,
-    #3d3a35 50%,
-    #6f6b62 65%,
-    #b9b4a8 100%
-  );
-}
-
-/* Stacked page edges on the outside, so it reads as many sheets. */
-.page-edges-left {
-  background: repeating-linear-gradient(
-    90deg,
-    #cfcabd 0px,
-    #cfcabd 1px,
-    #ece8df 1px,
-    #ece8df 3px
-  );
-}
-.page-edges-right {
-  background: repeating-linear-gradient(
-    90deg,
-    #ece8df 0px,
-    #ece8df 2px,
-    #cfcabd 2px,
-    #cfcabd 3px
-  );
-}
-
-/* The plank each row of books stands on. A real edge with a lit top and
-   a shadow underneath, so the books look like they are resting on it. */
-.shelf-plank {
-  background: linear-gradient(
-    180deg,
-    rgba(233, 229, 221, 0.42) 0%,
-    rgba(233, 229, 221, 0.16) 22%,
-    rgba(20, 20, 24, 0.9) 60%,
-    rgba(8, 8, 10, 1) 100%
-  );
-  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 1);
 }
