@@ -66,6 +66,39 @@ body {
     0 10px 22px -8px rgba(0, 0, 0, 0.9);
 }
 
+/* Two more tones so a row of books is not one repeated object. */
+.spine-b {
+  background: linear-gradient(
+    95deg,
+    #23232a 0%,
+    #585866 20%,
+    #b8b8c6 38%,
+    #6a6a78 52%,
+    #2e2e38 70%,
+    #8e8e9e 88%,
+    #3a3a44 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 10px 22px -8px rgba(0, 0, 0, 0.9);
+}
+
+.spine-c {
+  background: linear-gradient(
+    105deg,
+    #32323a 0%,
+    #8a8a96 22%,
+    #e2e2ea 40%,
+    #9a9aa8 56%,
+    #45454f 74%,
+    #adadbb 90%,
+    #3d3d46 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.11),
+    0 10px 22px -8px rgba(0, 0, 0, 0.9);
+}
+
 /* An untitled book: same metal, drained of contrast, waiting. */
 .spine-blank {
   background: linear-gradient(
@@ -204,12 +237,15 @@ body {
   );
 }
 
-/* The plank each row of books stands on. */
+/* The plank each row of books stands on. A real edge with a lit top and
+   a shadow underneath, so the books look like they are resting on it. */
 .shelf-plank {
   background: linear-gradient(
     180deg,
-    rgba(233, 229, 221, 0.22) 0%,
-    rgba(233, 229, 221, 0.06) 40%,
-    transparent 100%
+    rgba(233, 229, 221, 0.42) 0%,
+    rgba(233, 229, 221, 0.16) 22%,
+    rgba(20, 20, 24, 0.9) 60%,
+    rgba(8, 8, 10, 1) 100%
   );
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 1);
 }
