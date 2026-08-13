@@ -46,7 +46,7 @@ export function ShelfRoom({
                 ? `${PAPERS[i % 4]} h-56`
                 : "spine-blank h-44 opacity-70 hover:opacity-100"
             }`}
-            style={{ width: WIDTHS[i % 7] }}
+            style={{ width: `min(${WIDTHS[i % 7]}px, 15vw)` }}
           >
             {/* Titles run down the spine, the way they do on a real book. */}
             {book && (

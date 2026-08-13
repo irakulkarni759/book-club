@@ -39,7 +39,10 @@ export function Shelf({
             key={book.id}
             title={book.title}
             className={`${PAPERS[i % 4]} flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
-            style={{ width: WIDTHS[i % 7], height: `${HEIGHTS[i % 7]}%` }}
+            style={{
+              width: `min(${WIDTHS[i % 7]}px, 12vw)`,
+              height: `${HEIGHTS[i % 7]}%`,
+            }}
           >
             <span className="spine-title max-h-full truncate font-display text-sm">
               {book.title}
@@ -54,7 +57,7 @@ export function Shelf({
               key={`blank-${i}`}
               className="spine-blank shrink-0 rounded-[2px]"
               style={{
-                width: WIDTHS[k % 7],
+                width: `min(${WIDTHS[k % 7]}px, 12vw)`,
                 height: `${HEIGHTS[k % 7] - 12}%`,
               }}
             />
@@ -62,14 +65,14 @@ export function Shelf({
         })}
 
         {/* Pushes the name to the far end of the ledge. */}
-        <div className="min-w-6 flex-1" />
+        <div className="min-w-3 flex-1" />
 
         <div
           className={`flex shrink-0 items-baseline gap-2 pb-1 ${
             right ? "flex-row-reverse" : ""
           }`}
         >
-          <h2 className="chalk font-display text-2xl leading-none opacity-90 transition-opacity group-hover:opacity-100">
+          <h2 className="chalk font-display text-lg leading-none opacity-90 transition-opacity group-hover:opacity-100 sm:text-2xl">
             {name}
           </h2>
           <span className="font-display text-xs text-chalk-dim">
