@@ -13,6 +13,11 @@ export type Book = {
 const SLOTS = 5;
 const WORDS = ["none", "one", "two", "three", "four", "five"];
 
+// Same sizing and tone cycle as the shelf wall, so a book looks like the
+// same object in both places.
+const WIDTHS = [58, 74, 50, 66, 54, 80, 62];
+const TONES = ["spine", "spine-b", "spine-c"];
+
 export function ShelfRoom({
   memberId,
   books,
@@ -31,22 +36,22 @@ export function ShelfRoom({
 
   return (
     <>
-      <div className="mt-14 flex h-56 items-end gap-2">
+      <div className="mt-14 flex h-64 items-end gap-2">
         {slots.map((book, i) => (
           <button
             key={book?.id ?? `blank-${i}`}
             onClick={() => setOpenIndex(i)}
             aria-label={book ? `Open ${book.title}` : "Add a book"}
-            className={`group relative rounded-[3px] transition-all duration-300 hover:-translate-y-2 ${
-              book ? "spine h-48 w-11" : "spine-blank h-40 w-11 opacity-70"
+            className={`group flex items-center justify-center overflow-hidden rounded-[3px] py-4 transition-all duration-300 hover:-translate-y-2 ${
+              book
+                ? `${TONES[i % 3]} h-56`
+                : "spine-blank h-44 opacity-70 hover:opacity-100"
             }`}
+            style={{ width: WIDTHS[i % 7] }}
           >
-            {/* Titles run vertically down the spine, like a real one. */}
+            {/* Titles run down the spine, the way they do on a real book. */}
             {book && (
-              <span
-                className="absolute inset-0 flex items-center justify-center px-1 text-[10px] font-medium tracking-wide text-black/80 mix-blend-overlay"
-                style={{ writingMode: "vertical-rl" }}
-              >
+              <span className="spine-title max-h-full truncate text-sm font-semibold tracking-tight">
                 {book.title}
               </span>
             )}
@@ -54,7 +59,7 @@ export function ShelfRoom({
         ))}
       </div>
 
-      <div className="shelf-plank h-[3px] w-full rounded-full" />
+      <div className="shelf-plank mt-1.5 h-2 w-full rounded-sm" />
 
       {/* Milkyway has no digits, so counts are spelled out here. */}
       <p className="mt-6 text-sm text-paper-dim">

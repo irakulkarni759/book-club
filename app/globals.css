@@ -66,6 +66,16 @@ body {
     0 10px 22px -8px rgba(0, 0, 0, 0.9);
 }
 
+/* Titles run down the spine the way they do on a real book. Dark ink on
+   bright metal, with a faint light edge so it stays legible wherever the
+   gradient goes dark. */
+.spine-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: #14141a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
 /* Two more tones so a row of books is not one repeated object. */
 .spine-b {
   background: linear-gradient(

@@ -38,9 +38,13 @@ export function Shelf({
           <div
             key={book.id}
             title={book.title}
-            className={`${TONES[i % 3]} shrink-0 rounded-[2px] transition-transform duration-300 group-hover:-translate-y-1.5`}
+            className={`${TONES[i % 3]} flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
             style={{ width: WIDTHS[i % 7], height: `${HEIGHTS[i % 7]}%` }}
-          />
+          >
+            <span className="spine-title max-h-full truncate text-[13px] font-semibold tracking-tight">
+              {book.title}
+            </span>
+          </div>
         ))}
 
         {Array.from({ length: blanks }).map((_, i) => {
