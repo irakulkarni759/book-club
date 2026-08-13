@@ -2,34 +2,48 @@ import Link from "next/link";
 
 type Book = { id: string; title: string };
 
-// One member's shelf: their books as spines, plus empty slots up to five.
+// One member's shelf. Shelves alternate sides down the wall, so the eye
+// zigzags instead of scanning a single column.
 export function Shelf({
   name,
   books,
+  align,
   slots = 5,
 }: {
   name: string;
   books: Book[];
+  align: "left" | "right";
   slots?: number;
 }) {
   const blanks = Math.max(0, slots - books.length);
-  const done = books.length >= slots;
+  const right = align === "right";
 
   return (
     <Link
       href={`/shelf/${name.toLowerCase()}`}
-      className="group block rounded-lg px-4 pt-6 transition-colors hover:bg-ink-raised"
+      className={`group block w-[82%] rounded-lg px-4 pt-6 transition-colors hover:bg-ink-raised ${
+        right ? "ml-auto" : "mr-auto"
+      }`}
     >
-      <div className="flex items-end justify-between">
-        <h2 className="font-serif text-2xl text-paper">{name}</h2>
+      <div
+        className={`flex items-baseline gap-3 ${
+          right ? "flex-row-reverse" : ""
+        }`}
+      >
+        <h2 className="font-display text-2xl uppercase tracking-wide text-paper">
+          {name}
+        </h2>
         <span className="font-mono text-xs text-paper-dim">
           {books.length}/{slots}
-          {done ? " shelved" : " to shelve"}
         </span>
       </div>
 
-      {/* The books stand on the plank, so they align to the bottom. */}
-      <div className="mt-4 flex h-32 items-end gap-1.5">
+      {/* Books stand on the plank, so the row aligns to the bottom. */}
+      <div
+        className={`mt-4 flex h-32 items-end gap-1.5 ${
+          right ? "justify-end" : "justify-start"
+        }`}
+      >
         {books.map((book) => (
           <div
             key={book.id}
@@ -46,7 +60,7 @@ export function Shelf({
         ))}
       </div>
 
-      <div className="shelf-plank mt-0 h-[3px] w-full rounded-full" />
+      <div className="shelf-plank h-[3px] w-full rounded-full" />
     </Link>
   );
 }

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Shrofa Demo by NDNL Studio, 1001fonts Free For Personal Use license.
+   Display face only. Never use it for body text or anything long. */
+@font-face {
+  font-family: "Shrofa";
+  src: url("/fonts/Shrofa.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* ---------------------------------------------------------------
    DESIGN TOKENS
    Every color and font in the app is named here, once. Components
@@ -24,7 +33,7 @@
   --color-brass: var(--brass);
 
   --font-sans: var(--font-geist-sans);
-  --font-serif: var(--font-instrument-serif);
+  --font-display: "Shrofa", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { LiquidHeader } from "@/components/LiquidHeader";
+import { LiquidWordmark } from "@/components/LiquidWordmark";
 import { Shelf } from "@/components/Shelf";
 
 export default async function Home() {
@@ -9,20 +9,22 @@ export default async function Home() {
     .order("name");
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 pb-32">
-      <LiquidHeader />
+    <main className="mx-auto w-full max-w-3xl px-6 pt-20 pb-32">
+      <LiquidWordmark />
 
-      <div className="-mt-12 relative">
-        <h1 className="font-serif text-6xl tracking-tight">Book Club</h1>
-        <p className="mt-3 max-w-md text-paper-dim">
-          Five books each. The shelves decide what we read. Fall behind and a
-          bottle shows up on yours.
-        </p>
-      </div>
+      <p className="mt-8 max-w-md text-paper-dim">
+        Five books each. The shelves decide what we read. Fall behind and a
+        bottle shows up on yours.
+      </p>
 
-      <div className="mt-16 space-y-8">
-        {members?.map((member) => (
-          <Shelf key={member.id} name={member.name} books={member.books} />
+      <div className="mt-20 space-y-10">
+        {members?.map((member, i) => (
+          <Shelf
+            key={member.id}
+            name={member.name}
+            books={member.books}
+            align={i % 2 === 0 ? "left" : "right"}
+          />
         ))}
       </div>
     </main>
