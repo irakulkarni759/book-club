@@ -12,7 +12,7 @@ export default async function ShelfPage({
 
   const { data: member } = await supabase
     .from("members")
-    .select("id, name, books(id, title, author, why, created_at)")
+    .select("id, name, books(id, title, author, why, tags, created_at)")
     .ilike("name", name)
     .single();
 

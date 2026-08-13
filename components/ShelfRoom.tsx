@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { OpenBook } from "./OpenBook";
+import { TasteProfile } from "./TasteProfile";
 
 export type Book = {
   id: string;
   title: string;
   author: string | null;
   why: string | null;
+  tags: string[] | null;
 };
 
 const SLOTS = 5;
@@ -65,6 +67,8 @@ export function ShelfRoom({
           ? "shelf is full, but you can always add more"
           : `${SLOTS - books.length} more to go`}
       </p>
+
+      <TasteProfile books={books} />
 
       {openIndex !== null && (
         <OpenBook
