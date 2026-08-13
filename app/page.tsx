@@ -9,15 +9,17 @@ export default async function Home() {
     .order("name");
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 pt-20 pb-32">
+    // h-dvh is the real height of the screen, phone browser chrome included.
+    // Everything below is sized in fractions of it, so the whole wall fits
+    // on one screen without scrolling.
+    <main className="mx-auto flex h-dvh w-full max-w-3xl flex-col overflow-hidden px-6 pt-8 pb-6">
       <LiquidWordmark />
 
-      <p className="mt-8 max-w-md text-paper-dim">
-        Five books each. The shelves decide what we read. Fall behind and a
-        bottle shows up on yours.
+      <p className="mt-1 shrink-0 text-sm text-paper-dim">
+        one shot per missed book
       </p>
 
-      <div className="mt-20 space-y-10">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col justify-between">
         {members?.map((member, i) => (
           <Shelf
             key={member.id}

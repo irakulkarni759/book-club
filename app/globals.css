@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
-/* Shrofa Demo by NDNL Studio, 1001fonts Free For Personal Use license.
-   Display face only. Never use it for body text or anything long. */
+/* Milkyway Demo by Ragamkata Studio, free for personal use.
+   The display face: the wordmark and member names.
+   WARNING: this demo has 56 glyphs, letters and space only. No digits,
+   no punctuation. Never use it for body text. */
 @font-face {
-  font-family: "Shrofa";
-  src: url("/fonts/Shrofa.woff2") format("woff2");
+  font-family: "Milkyway";
+  src: url("/fonts/Milkyway.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
@@ -33,7 +35,7 @@
   --color-brass: var(--brass);
 
   --font-sans: var(--font-geist-sans);
-  --font-display: "Shrofa", sans-serif;
+  --font-display: "Milkyway", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -77,6 +79,73 @@ body {
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 8px 18px -8px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------------------------------------------------------------
+   THE OPEN BOOK
+   A spread is two paper pages with a shadowed gutter between them,
+   tilted in 3D so you see it as an object rather than a form.
+   --------------------------------------------------------------- */
+.book-stage {
+  perspective: 2200px;
+}
+
+.book-spread {
+  transform-style: preserve-3d;
+  transform: rotateX(9deg);
+}
+
+.page {
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(255, 255, 255, 0.7) 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, #f2efe8 0%, #e4e0d6 100%);
+  color: #1a1814;
+}
+
+/* The crease. Darkens the inner edge of each page toward the spine. */
+.page-left {
+  box-shadow: inset -22px 0 28px -22px rgba(0, 0, 0, 0.75);
+  border-radius: 3px 0 0 3px;
+}
+.page-right {
+  box-shadow: inset 22px 0 28px -22px rgba(0, 0, 0, 0.75);
+  border-radius: 0 3px 3px 0;
+}
+
+/* The spine itself, standing between the two pages. */
+.book-gutter {
+  background: linear-gradient(
+    90deg,
+    #b9b4a8 0%,
+    #6f6b62 35%,
+    #3d3a35 50%,
+    #6f6b62 65%,
+    #b9b4a8 100%
+  );
+}
+
+/* Stacked page edges on the outside, so it reads as many sheets. */
+.page-edges-left {
+  background: repeating-linear-gradient(
+    90deg,
+    #cfcabd 0px,
+    #cfcabd 1px,
+    #ece8df 1px,
+    #ece8df 3px
+  );
+}
+.page-edges-right {
+  background: repeating-linear-gradient(
+    90deg,
+    #ece8df 0px,
+    #ece8df 2px,
+    #cfcabd 2px,
+    #cfcabd 3px
+  );
 }
 
 /* The plank each row of books stands on. */

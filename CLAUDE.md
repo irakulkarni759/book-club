@@ -22,16 +22,20 @@ The look is liquid chrome on near-black. Reference: paper-design/liquid-logo.
 - **Never hardcode a color.** Use the tokens in `app/globals.css`:
   `ink`, `ink-raised`, `paper`, `paper-dim`, `edge`, `brass`.
   As Tailwind classes: `bg-ink`, `text-paper-dim`, `border-edge`, etc.
-- **Shrofa (`font-display`) for names and headings only.** It is a display
-  face under a personal-use license, uppercase-looking and very wide. Never
-  use it for body text, book titles, or anything longer than a few words.
+- **Milkyway (`font-display`) for the wordmark and member names only.**
+  The demo cut has 56 glyphs: letters and space. No digits, no punctuation.
+  Never use it for body text, book titles, taglines, or anything containing
+  a number or a comma. Spell counts out as words if they must appear in it.
   Sans (`font-sans`) for all reading text, mono (`font-mono`) for counts,
   timers, and tallies.
 - **The wordmark is a PNG, not live text.** `public/wordmark.png` is "bis
-  book club" set in Shrofa, white on transparent, used as the shader's mask.
-  To change the words, re-render the PNG rather than adding text on top.
+  book club" set in Milkyway, white on transparent, one straight line, used
+  as the shader's mask. To change the words, re-render the PNG.
 - **Shelves zigzag.** They alternate left and right down the page via the
   `align` prop on `<Shelf>`.
+- **The whole wall fits one screen.** The homepage is `h-dvh` with no
+  scrolling: shelves share the leftover height via `flex-1` and size their
+  spines in percentages. Anything added to the homepage must keep that true.
 - **Real WebGL shaders are rationed.** Browsers cap out around 8-16 canvases
   per page. Use `<LiquidMetal>` only for hero moments: the header, the book
   of the month, wine bottles. Everything else fakes metal with the `.spine`

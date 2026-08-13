@@ -2,8 +2,9 @@ import Link from "next/link";
 
 type Book = { id: string; title: string };
 
-// One member's shelf. Shelves alternate sides down the wall, so the eye
-// zigzags instead of scanning a single column.
+// One member's shelf. Shelves alternate sides down the wall, and each one
+// is a flex row that shares the leftover screen height equally, so four
+// shelves always fit whatever screen they land on.
 export function Shelf({
   name,
   books,
@@ -21,26 +22,24 @@ export function Shelf({
   return (
     <Link
       href={`/shelf/${name.toLowerCase()}`}
-      className={`group block w-[82%] rounded-lg px-4 pt-6 transition-colors hover:bg-ink-raised ${
+      className={`group flex min-h-0 w-[82%] flex-1 flex-col justify-end rounded-lg px-3 transition-colors hover:bg-ink-raised ${
         right ? "ml-auto" : "mr-auto"
       }`}
     >
       <div
-        className={`flex items-baseline gap-3 ${
+        className={`flex shrink-0 items-baseline gap-2.5 ${
           right ? "flex-row-reverse" : ""
         }`}
       >
-        <h2 className="font-display text-2xl uppercase tracking-wide text-paper">
-          {name}
-        </h2>
-        <span className="font-mono text-xs text-paper-dim">
+        <h2 className="font-display text-xl leading-none text-paper">{name}</h2>
+        <span className="font-mono text-[10px] text-paper-dim">
           {books.length}/{slots}
         </span>
       </div>
 
       {/* Books stand on the plank, so the row aligns to the bottom. */}
       <div
-        className={`mt-4 flex h-32 items-end gap-1.5 ${
+        className={`mt-2 flex min-h-0 flex-1 items-end gap-1.5 ${
           right ? "justify-end" : "justify-start"
         }`}
       >
@@ -48,19 +47,19 @@ export function Shelf({
           <div
             key={book.id}
             title={book.title}
-            className="spine h-28 w-7 rounded-[2px] transition-transform group-hover:-translate-y-1"
+            className="spine h-[88%] w-6 rounded-[2px] transition-transform group-hover:-translate-y-1"
           />
         ))}
 
         {Array.from({ length: blanks }).map((_, i) => (
           <div
             key={`blank-${i}`}
-            className="spine-blank h-24 w-7 rounded-[2px] opacity-70"
+            className="spine-blank h-[76%] w-6 rounded-[2px] opacity-70"
           />
         ))}
       </div>
 
-      <div className="shelf-plank h-[3px] w-full rounded-full" />
+      <div className="shelf-plank mt-1 h-[3px] w-full shrink-0 rounded-full" />
     </Link>
   );
 }
