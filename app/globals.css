@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------
+   DESIGN TOKENS
+   Every color and font in the app is named here, once. Components
+   refer to the names, never to raw hex values. Change a value here
+   and the whole app changes with it.
+   --------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #08080a; /* page background, near black so chrome pops */
+  --ink-raised: #101014; /* cards and panels, one step lighter */
+  --paper: #e9e5dd; /* primary text, warm off-white */
+  --paper-dim: #8b877f; /* secondary text, labels */
+  --edge: #23232a; /* hairline borders */
+  --brass: #c9a227; /* wine debt, warnings, the one warm accent */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-edge: var(--edge);
+  --color-brass: var(--brass);
+
   --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-instrument-serif);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--ink);
+  color: var(--paper);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---------------------------------------------------------------
+   BOOK SPINES
+   A spine is a CSS gradient, not a shader. Twenty WebGL canvases
+   would break the page, so spines fake the metal and the real
+   shader is saved for the few hero moments.
+   --------------------------------------------------------------- */
+.spine {
+  background: linear-gradient(
+    100deg,
+    #2a2a30 0%,
+    #6e6e78 18%,
+    #d6d6de 34%,
+    #8a8a94 46%,
+    #3a3a42 62%,
+    #9a9aa4 78%,
+    #4a4a52 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 10px 22px -8px rgba(0, 0, 0, 0.9);
+}
+
+/* An untitled book: same metal, drained of contrast, waiting. */
+.spine-blank {
+  background: linear-gradient(
+    100deg,
+    #1e1e24 0%,
+    #33333c 26%,
+    #4c4c58 48%,
+    #2e2e37 72%,
+    #1a1a20 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 8px 18px -8px rgba(0, 0, 0, 0.9);
+}
+
+/* The plank each row of books stands on. */
+.shelf-plank {
+  background: linear-gradient(
+    180deg,
+    rgba(233, 229, 221, 0.22) 0%,
+    rgba(233, 229, 221, 0.06) 40%,
+    transparent 100%
+  );
 }
