@@ -15,20 +15,14 @@ export function OpenBook({
   book: Book | null;
   onClose: () => void;
 }) {
-  // `spread` drives the animation. It starts false, flips to true one
-  // frame after mount, and CSS transitions the book from spine to spread.
-  const [spread, setSpread] = useState(false);
+  // The book plays an opening animation the moment it mounts, driven by
+  // CSS. `shutting` swaps in the reverse animation before unmounting.
+  const [shutting, setShutting] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setSpread(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  // Close the same way it opened: collapse back to a spine, then unmount.
   function close() {
-    setSpread(false);
-    setTimeout(onClose, 420);
+    setShutting(true);
+    setTimeout(onClose, 380);
   }
 
   useEffect(() => {
@@ -41,12 +35,12 @@ export function OpenBook({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
+        shutting ? "veil-out" : "veil-in"
+      }`}
       style={{
         background: "rgba(4,4,6,0.82)",
         backdropFilter: "blur(6px)",
-        opacity: spread ? 1 : 0,
-        transition: "opacity 320ms ease",
       }}
       onClick={close}
     >
@@ -55,16 +49,10 @@ export function OpenBook({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="book-spread relative flex h-[70vh] max-h-[520px] w-full"
-          style={{
-            // Closed, the book is as narrow as a spine. Open, it is a
-            // full spread. The transition between those two is the effect.
-            transform: `rotateX(9deg) scaleX(${spread ? 1 : 0.07})`,
-            opacity: spread ? 1 : 0,
-            transition:
-              "transform 560ms cubic-bezier(.16,.84,.28,1), opacity 260ms ease",
-            boxShadow: "0 50px 90px -30px rgba(0,0,0,0.95)",
-          }}
+          className={`book-spread relative flex h-[70vh] max-h-[520px] w-full ${
+            shutting ? "book-shutting" : "book-opening"
+          }`}
+          style={{ boxShadow: "0 50px 90px -30px rgba(0,0,0,0.95)" }}
         >
           <form
             action={async (formData) => {
