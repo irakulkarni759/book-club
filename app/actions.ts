@@ -27,15 +27,42 @@ export async function saveBook(formData: FormData) {
   // Fireworks is slow or down, their book is already safe.
   let id: string | null = bookId ? String(bookId) : null;
 
+  // A save with no bookId used to always INSERT, so submitting twice while
+  // the first save was still tagging created a second copy. Look for the
+  // same title on this shelf first and update that instead, which makes
+  // saving the same book twice a no-op rather than a duplicate.
+  if (!id) {
+    const { data: existing } = await supabase
+      .from("books")
+      .select("id")
+      .eq("member_id", memberId)
+      .ilike("title", title)
+      .maybeSingle();
+    id = existing?.id ?? null;
+  }
+
   if (id) {
     await supabase.from("books").update({ title, author, why }).eq("id", id);
   } else {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("books")
       .insert({ member_id: memberId, title, author, why })
       .select("id")
       .single();
     id = data?.id ?? null;
+
+    // If two saves raced past the check above, the unique index rejects
+    // the second one. That is the correct outcome, but we still want the
+    // id so the book gets tagged rather than silently skipped.
+    if (!id && error) {
+      const { data: raced } = await supabase
+        .from("books")
+        .select("id")
+        .eq("member_id", memberId)
+        .ilike("title", title)
+        .maybeSingle();
+      id = raced?.id ?? null;
+    }
   }
 
   // Then describe it in the shared vocabulary. tagBook never throws; an

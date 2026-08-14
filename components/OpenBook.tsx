@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveBook } from "@/app/actions";
 import type { Book } from "./ShelfRoom";
 
@@ -20,13 +20,20 @@ export function OpenBook({
   const [shutting, setShutting] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // A ref, not state, because it has to flip SYNCHRONOUSLY. React batches
+  // state updates, so a second submit can fire before `saving` re-renders
+  // and disables the button. That is how one book got saved three times.
+  const savingRef = useRef(false);
+
   function close() {
     setShutting(true);
     setTimeout(onClose, 380);
   }
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !savingRef.current) close();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
@@ -42,7 +49,7 @@ export function OpenBook({
         background: "rgba(4,4,6,0.82)",
         backdropFilter: "blur(6px)",
       }}
-      onClick={close}
+      onClick={() => !savingRef.current && close()}
     >
       <div
         className="book-stage w-full max-w-3xl"
@@ -56,11 +63,18 @@ export function OpenBook({
         >
           <form
             action={async (formData) => {
+              if (savingRef.current) return; // ignore repeat submits
+              savingRef.current = true;
               setSaving(true);
               await saveBook(formData);
               close();
             }}
-            className="flex h-full w-full"
+            // While saving, the whole spread stops accepting input. The
+            // save takes a few seconds because it waits for tagging, and
+            // an apparently idle form invites another click.
+            className={`flex h-full w-full transition-opacity ${
+              saving ? "pointer-events-none opacity-60" : ""
+            }`}
           >
             <input type="hidden" name="memberId" value={memberId} />
             {book && <input type="hidden" name="bookId" value={book.id} />}
@@ -94,7 +108,7 @@ export function OpenBook({
                   disabled={saving}
                   className="rounded-full bg-black px-5 py-2 text-sm text-[#f2efe8] transition-opacity hover:opacity-80 disabled:opacity-40"
                 >
-                  {saving ? "shelving" : "shelve it"}
+                  {saving ? "shelving it, one moment" : "shelve it"}
                 </button>
                 <button
                   type="button"

@@ -20,6 +20,12 @@ create table books (
   created_at timestamptz not null default now()
 );
 
+-- One member cannot shelve the same title twice. Case-insensitive, so
+-- "Beloved" and "beloved" collide. This is the last line of defence against
+-- double-submits; the app also checks before inserting.
+create unique index books_member_title_idx
+  on books (member_id, lower(title));
+
 -- 3. PICKS -----------------------------------------------------------------
 -- The book of the month.
 create table picks (
