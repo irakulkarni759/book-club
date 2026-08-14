@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase";
-import { tagBook } from "@/lib/fireworks";
+import { tagBook, proposeCandidates } from "@/lib/fireworks";
 import { clearViewerId, getViewerId, setViewerId } from "@/lib/identity";
 import { REACTION_SET } from "@/lib/reactions";
 
@@ -125,4 +125,95 @@ export async function toggleReaction(bookId: string, emoji: string) {
 
   revalidatePath("/");
   revalidatePath("/shelf/[name]", "page");
+}
+
+// Asks Fireworks for three candidates from everyone's current shelves and
+// opens a fresh voting round. Clears out any candidates (and their votes,
+// via the cascade) left over from a previous round first, so there is
+// always exactly one round open at a time.
+export async function generateCandidates() {
+  const { data: members } = await supabase
+    .from("members")
+    .select("name, books(title, author, tags)")
+    .order("name");
+
+  if (!members || members.length === 0) return;
+
+  const candidates = await proposeCandidates(members);
+  if (candidates.length === 0) return; // Fireworks unavailable; leave the old round, if any, in place
+
+  await supabase.from("candidates").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await supabase.from("candidates").insert(candidates);
+
+  revalidatePath("/pick");
+}
+
+// One active vote per member, across the whole round, not one per
+// candidate: voting for a new candidate moves your vote rather than
+// adding a second one. Voting for the one you already picked un-votes.
+export async function castVote(candidateId: string) {
+  const memberId = await getViewerId();
+  if (!memberId) return;
+
+  const { data: mine } = await supabase
+    .from("candidate_votes")
+    .select("id, candidate_id")
+    .eq("member_id", memberId)
+    .maybeSingle();
+
+  if (mine?.candidate_id === candidateId) {
+    await supabase.from("candidate_votes").delete().eq("id", mine.id);
+  } else {
+    if (mine) await supabase.from("candidate_votes").delete().eq("id", mine.id);
+    await supabase.from("candidate_votes").insert({ candidate_id: candidateId, member_id: memberId });
+  }
+
+  await settleIfEveryoneVoted();
+  revalidatePath("/pick");
+}
+
+// Once every member has cast a vote, the plurality winner becomes the
+// month's pick automatically — nobody has to "finalize" anything by hand.
+// A tie is broken by whichever candidate reached the top count first,
+// which is arbitrary but final, since a hung vote helps nobody.
+async function settleIfEveryoneVoted() {
+  const [{ count: memberCount }, { data: candidates }, { data: votes }] = await Promise.all([
+    supabase.from("members").select("id", { count: "exact", head: true }),
+    supabase.from("candidates").select("id, title, author, reason, created_at").order("created_at"),
+    supabase.from("candidate_votes").select("candidate_id, created_at").order("created_at"),
+  ]);
+
+  if (!candidates?.length || !votes?.length || !memberCount) return;
+  if (votes.length < memberCount) return; // still waiting on someone
+
+  const tally = new Map<string, number>();
+  const firstReachedAt = new Map<string, string>();
+  for (const v of votes) {
+    const n = (tally.get(v.candidate_id) ?? 0) + 1;
+    tally.set(v.candidate_id, n);
+    firstReachedAt.set(v.candidate_id, v.created_at); // last write per id, i.e. when it hit its final count
+  }
+
+  const winnerId = [...tally.entries()].sort((a, b) => {
+    if (b[1] !== a[1]) return b[1] - a[1]; // most votes first
+    return firstReachedAt.get(a[0])!.localeCompare(firstReachedAt.get(b[0])!); // earlier tiebreak wins
+  })[0][0];
+
+  const winner = candidates.find((c) => c.id === winnerId)!;
+
+  const month = new Date();
+  month.setDate(1);
+
+  await supabase.from("picks").insert({
+    title: winner.title,
+    author: winner.author,
+    reason: winner.reason,
+    month: month.toISOString().slice(0, 10),
+  });
+
+  // The round is over; clear it so the wall is ready for next month.
+  await supabase.from("candidates").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+
+  revalidatePath("/");
+  revalidatePath("/pick");
 }

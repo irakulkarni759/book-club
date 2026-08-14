@@ -34,12 +34,20 @@ export default async function Home() {
         <p className="chalk mt-1 font-display text-lg text-chalk-dim">
           one shot per missed book
         </p>
-        <Link
-          href="/map"
-          className="chalk mt-2 font-display text-sm text-chalk-dim underline-offset-4 hover:text-chalk hover:underline"
-        >
-          see the taste map
-        </Link>
+        <div className="mt-2 flex gap-4">
+          <Link
+            href="/map"
+            className="chalk font-display text-sm text-chalk-dim underline-offset-4 hover:text-chalk hover:underline"
+          >
+            see the taste map
+          </Link>
+          <Link
+            href="/pick"
+            className="chalk font-display text-sm text-chalk-dim underline-offset-4 hover:text-chalk hover:underline"
+          >
+            the pick
+          </Link>
+        </div>
       </div>
 
       <div className="relative mt-6 flex min-h-0 flex-1 flex-col justify-between gap-1">

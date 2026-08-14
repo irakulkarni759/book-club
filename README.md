@@ -225,7 +225,7 @@ CLAUDE.md               design rules, so AI edits stay on-brief
 
 ## Still to build
 
-- [ ] AI proposes three candidate books, the group votes
-- [ ] The monthly pick gets its own page with a deadline you set
+- [x] AI proposes three candidate books, the group votes (`/pick`)
+- [ ] The monthly pick gets a deadline you set, once settled
 - [ ] Chapter-by-chapter comments, plus overall comments
 - [ ] Shots appear on the shelf of anyone who skipped the last chapter

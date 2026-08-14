@@ -66,3 +66,21 @@ starts reaching for metallic gradients, it is off-brief.
   removes it. Full picker inside an open book; a non-interactive top-emoji
   badge peeks from the corner of a spine on the wall and on a member's own
   shelf.
+- **The pick** (`/pick`, `app/pick/page.tsx`) is a state machine over three
+  tables, not one page with one query:
+  1. No `candidates` row and any shelf under 5 books &rarr; "waiting on X, Y".
+  2. No `candidates` row, every shelf full &rarr; a "reveal three candidates"
+     button, which calls `generateCandidates()`. It reads every shelf and
+     tags via `proposeCandidates()` (`lib/fireworks.ts`), which needs a much
+     larger token budget than tagging a single book (see the comment above
+     the call) because it has to reason about four shelves at once, not one.
+  3. `candidates` rows exist, not everyone has voted &rarr; `<VotePanel>`,
+     one vote per member for the whole round (`castVote` moves your vote
+     rather than adding a second one; voting for your own pick again un-votes).
+  4. Once every member has voted, `settleIfEveryoneVoted()` (inside
+     `castVote`, in `app/actions.ts`) picks the plurality winner, writes it
+     to `picks` for the current month, and clears `candidates` (which
+     cascades to `candidate_votes`). There is exactly one open round at a
+     time; generating fresh candidates always clears whatever was there.
+  5. A `picks` row exists for the current month &rarr; the settled view.
+     There can only be one `picks` row per month (`month` is `unique`).
