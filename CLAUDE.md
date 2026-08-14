@@ -12,7 +12,10 @@ last chapter gets a shot added to their shelf.
 - Next.js 16 (App Router) + TypeScript + Tailwind v4
 - Supabase (Postgres) for all data. Client in `lib/supabase.ts`.
 - Fireworks for book tagging, recommendations, and judging comments
-- No auth. Public link, pick-your-name. RLS policies are wide open by design.
+- No login. Public link, plus one soft identity layer: a name picked once
+  from the four real members and remembered in a cookie (`lib/identity.ts`).
+  It exists only to attribute reactions/comments to a person, not to gate
+  reading or shelving. RLS policies are wide open by design.
 
 ## Design rules
 
@@ -53,3 +56,13 @@ starts reaching for metallic gradients, it is off-brief.
   (form state, timers, clicks).
 - Shared UI lives in `components/`, one component per file, named export.
 - Schema lives in `supabase/schema.sql`. Keep it updated when tables change.
+- **Query optional data separately from required data.** e.g. `reactions`
+  is fetched as its own query and merged in with `groupReactions()`
+  (`lib/reactions.ts`), never nested inside the `members`/`books` select.
+  A missing or broken optional table then degrades to "shows nothing";
+  nesting it would take the whole page down if that table has a problem.
+- Reactions: fixed emoji set (`REACTION_SET` in `lib/reactions.ts`), one
+  row per (book, member, emoji) in the `reactions` table, tapping again
+  removes it. Full picker inside an open book; a non-interactive top-emoji
+  badge peeks from the corner of a spine on the wall and on a member's own
+  shelf.

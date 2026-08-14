@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Shelf } from "@/components/Shelf";
+import { groupReactions } from "@/lib/reactions";
 
 // These pages read live data that changes whenever anyone shelves a book.
 // Without this, Next.js pre-renders them at build time and Vercel serves
@@ -9,10 +10,16 @@ import { Shelf } from "@/components/Shelf";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const { data: members } = await supabase
-    .from("members")
-    .select("id, name, books(id, title)")
-    .order("name");
+  // Two independent queries, not one nested select. If the reactions
+  // table does not exist yet (the migration has not been run), that
+  // query alone comes back empty and the shelves still render fine.
+  // A single nested query would fail as a whole and take the wall down.
+  const [{ data: members }, { data: reactionRows }] = await Promise.all([
+    supabase.from("members").select("id, name, books(id, title)").order("name"),
+    supabase.from("reactions").select("book_id, emoji, member_id"),
+  ]);
+
+  const reactionsByBook = groupReactions(reactionRows ?? []);
 
   return (
     // h-dvh is the real height of the screen, phone browser chrome included.
@@ -40,7 +47,10 @@ export default async function Home() {
           <Shelf
             key={member.id}
             name={member.name}
-            books={member.books}
+            books={member.books.map((b) => ({
+              ...b,
+              reactions: reactionsByBook.get(b.id) ?? [],
+            }))}
             align={i % 2 === 0 ? "left" : "right"}
           />
         ))}

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { tagBook } from "@/lib/fireworks";
+import { clearViewerId, getViewerId, setViewerId } from "@/lib/identity";
+import { REACTION_SET } from "@/lib/reactions";
 
 // "use server" at the top of a file marks every export as a Server Action:
 // a function the browser can call, but whose body only ever runs on the
@@ -76,5 +78,51 @@ export async function saveBook(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/map");
+  revalidatePath("/shelf/[name]", "page");
+}
+
+// Sets the "who are you" cookie. Called once, from the name picker.
+// Cookies can only be written from a Server Function, never while a
+// Server Component is rendering, which is why this exists separately
+// from the pages that read the identity back out.
+export async function chooseIdentity(formData: FormData) {
+  const memberId = String(formData.get("memberId") ?? "");
+  if (!memberId) return;
+  await setViewerId(memberId);
+  // "layout" revalidates every page, since the name picker can appear
+  // above any of them.
+  revalidatePath("/", "layout");
+}
+
+// Forgets who you are, so the picker reappears. Used by the "not you?"
+// link, and by anyone testing on a shared laptop.
+export async function switchIdentity() {
+  await clearViewerId();
+  revalidatePath("/", "layout");
+}
+
+// Adding a reaction you already left removes it. That is the whole
+// interaction: tap to react, tap again to take it back.
+export async function toggleReaction(bookId: string, emoji: string) {
+  if (!REACTION_SET.includes(emoji as (typeof REACTION_SET)[number])) return;
+
+  const memberId = await getViewerId();
+  if (!memberId) return; // no identity picked yet, nothing to attribute this to
+
+  const { data: existing } = await supabase
+    .from("reactions")
+    .select("id")
+    .eq("book_id", bookId)
+    .eq("member_id", memberId)
+    .eq("emoji", emoji)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase.from("reactions").delete().eq("id", existing.id);
+  } else {
+    await supabase.from("reactions").insert({ book_id: bookId, member_id: memberId, emoji });
+  }
+
+  revalidatePath("/");
   revalidatePath("/shelf/[name]", "page");
 }

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { OpenBook } from "./OpenBook";
 import { TasteProfile } from "./TasteProfile";
+import { ReactionBadge } from "./BookReactions";
+import type { ReactionRow } from "@/lib/reactions";
 
 export type Book = {
   id: string;
@@ -10,6 +12,7 @@ export type Book = {
   author: string | null;
   why: string | null;
   tags: string[] | null;
+  reactions: ReactionRow[];
 };
 
 const SLOTS = 5;
@@ -22,9 +25,11 @@ const PAPERS = ["spine-bone", "spine-cream", "spine-oat", "spine-linen"];
 export function ShelfRoom({
   memberId,
   books,
+  viewerId,
 }: {
   memberId: string;
   books: Book[];
+  viewerId: string | null;
 }) {
   // useState is how a component remembers something between clicks.
   // `openIndex` is which slot is open, or null when the shelf is closed.
@@ -39,24 +44,27 @@ export function ShelfRoom({
     <>
       <div className="mt-14 flex h-64 items-end gap-2">
         {slots.map((book, i) => (
-          <button
+          <div
             key={book?.id ?? `blank-${i}`}
-            onClick={() => setOpenIndex(i)}
-            aria-label={book ? `Open ${book.title}` : "Add a book"}
-            className={`group flex items-center justify-center overflow-hidden rounded-[3px] py-4 transition-all duration-300 hover:-translate-y-2 ${
-              book
-                ? `${PAPERS[i % 4]} h-56`
-                : "spine-blank h-44 opacity-70 hover:opacity-100"
-            }`}
+            className={`relative shrink-0 ${book ? "h-56" : "h-44"}`}
             style={{ width: `min(${WIDTHS[i % 7]}px, 15vw)` }}
           >
-            {/* Titles run down the spine, the way they do on a real book. */}
-            {book && (
-              <span className="spine-title max-h-full truncate font-display text-base">
-                {book.title}
-              </span>
-            )}
-          </button>
+            <button
+              onClick={() => setOpenIndex(i)}
+              aria-label={book ? `Open ${book.title}` : "Add a book"}
+              className={`group flex h-full w-full items-center justify-center overflow-hidden rounded-[3px] py-4 transition-all duration-300 hover:-translate-y-2 ${
+                book ? PAPERS[i % 4] : "spine-blank opacity-70 hover:opacity-100"
+              }`}
+            >
+              {/* Titles run down the spine, the way they do on a real book. */}
+              {book && (
+                <span className="spine-title max-h-full truncate font-display text-base">
+                  {book.title}
+                </span>
+              )}
+            </button>
+            {book && <ReactionBadge reactions={book.reactions} />}
+          </div>
         ))}
       </div>
 
@@ -74,6 +82,7 @@ export function ShelfRoom({
         <OpenBook
           memberId={memberId}
           book={slots[openIndex]}
+          viewerId={viewerId}
           onClose={() => setOpenIndex(null)}
         />
       )}

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getViewerId } from "@/lib/identity";
+import { groupReactions } from "@/lib/reactions";
 import { ShelfRoom } from "@/components/ShelfRoom";
 
 // The [name] folder makes this one file serve /shelf/ira, /shelf/isha,
@@ -10,17 +12,26 @@ export default async function ShelfPage({
 }: PageProps<"/shelf/[name]">) {
   const { name } = await params;
 
-  const { data: member } = await supabase
-    .from("members")
-    .select("id, name, books(id, title, author, why, tags, created_at)")
-    .ilike("name", name)
-    .single();
+  // Reactions are fetched separately from the shelf itself. If that table
+  // is missing (migration not yet run) or the query fails for any reason,
+  // the shelf still loads; it just shows no reactions until it's fixed.
+  const [{ data: member }, { data: reactionRows }, viewerId] = await Promise.all([
+    supabase
+      .from("members")
+      .select("id, name, books(id, title, author, why, tags, created_at)")
+      .ilike("name", name)
+      .single(),
+    supabase.from("reactions").select("book_id, emoji, member_id"),
+    getViewerId(),
+  ]);
 
   if (!member) notFound();
 
-  const books = [...member.books].sort((a, b) =>
-    a.created_at.localeCompare(b.created_at)
-  );
+  const reactionsByBook = groupReactions(reactionRows ?? []);
+
+  const books = [...member.books]
+    .sort((a, b) => a.created_at.localeCompare(b.created_at))
+    .map((b) => ({ ...b, reactions: reactionsByBook.get(b.id) ?? [] }));
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 pt-10 pb-32">
@@ -36,7 +47,7 @@ export default async function ShelfPage({
         open a book and tell us why you love it
       </p>
 
-      <ShelfRoom memberId={member.id} books={books} />
+      <ShelfRoom memberId={member.id} books={books} viewerId={viewerId} />
     </main>
   );
 }

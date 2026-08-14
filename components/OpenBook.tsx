@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { saveBook } from "@/app/actions";
+import { BookReactions } from "./BookReactions";
 import type { Book } from "./ShelfRoom";
 
 const FACT_SLOTS = 5;
@@ -9,10 +10,12 @@ const FACT_SLOTS = 5;
 export function OpenBook({
   memberId,
   book,
+  viewerId,
   onClose,
 }: {
   memberId: string;
   book: Book | null;
+  viewerId: string | null;
   onClose: () => void;
 }) {
   // The book plays an opening animation the moment it mounts, driven by
@@ -101,6 +104,18 @@ export function OpenBook({
                 placeholder="Author"
                 className="mt-6 w-full border-b border-black/15 bg-transparent pb-2 text-base outline-none placeholder:text-black/25 focus:border-black/40"
               />
+
+              {/* Only an already-shelved book has an id to react to. A
+                  book still being composed has nothing to react on yet. */}
+              {book && (
+                <div className="mt-8">
+                  <BookReactions
+                    bookId={book.id}
+                    reactions={book.reactions}
+                    viewerId={viewerId}
+                  />
+                </div>
+              )}
 
               <div className="mt-auto flex items-center gap-4">
                 <button

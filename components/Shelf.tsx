@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ReactionBadge } from "./BookReactions";
+import type { ReactionRow } from "@/lib/reactions";
 
-type Book = { id: string; title: string };
+type Book = { id: string; title: string; reactions: ReactionRow[] };
 
 // Deterministic variation so a shelf looks like real books rather than a
 // bar chart. The same book always gets the same size and paper.
@@ -38,7 +40,7 @@ export function Shelf({
           <div
             key={book.id}
             title={book.title}
-            className={`${PAPERS[i % 4]} flex shrink-0 items-center justify-center overflow-hidden rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
+            className={`${PAPERS[i % 4]} relative flex shrink-0 items-center justify-center overflow-visible rounded-[2px] py-3 transition-transform duration-300 group-hover:-translate-y-1.5`}
             style={{
               width: `min(${WIDTHS[i % 7]}px, 12vw)`,
               height: `${HEIGHTS[i % 7]}%`,
@@ -47,6 +49,7 @@ export function Shelf({
             <span className="spine-title max-h-full truncate font-display text-sm">
               {book.title}
             </span>
+            <ReactionBadge reactions={book.reactions} />
           </div>
         ))}
 
