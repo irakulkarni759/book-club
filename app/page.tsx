@@ -2,6 +2,12 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Shelf } from "@/components/Shelf";
 
+// These pages read live data that changes whenever anyone shelves a book.
+// Without this, Next.js pre-renders them at build time and Vercel serves
+// that snapshot forever, so new books never appear. Four readers is not a
+// traffic problem; a stale page is.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const { data: members } = await supabase
     .from("members")

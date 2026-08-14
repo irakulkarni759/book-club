@@ -3,6 +3,12 @@ import { supabase } from "@/lib/supabase";
 import { TasteMap } from "@/components/TasteMap";
 import { allPairs, commonGround, signatures, tasteOf } from "@/lib/taste";
 
+// These pages read live data that changes whenever anyone shelves a book.
+// Without this, Next.js pre-renders them at build time and Vercel serves
+// that snapshot forever, so new books never appear. Four readers is not a
+// traffic problem; a stale page is.
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: "taste map" };
 
 export default async function MapPage() {

@@ -48,5 +48,6 @@ export async function saveBook(formData: FormData) {
   }
 
   revalidatePath("/");
+  revalidatePath("/map");
   revalidatePath("/shelf/[name]", "page");
 }
