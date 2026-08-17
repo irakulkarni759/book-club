@@ -1,6 +1,6 @@
 # bis book club
 
-Day 2 of a 25-day vibecoding challenge: one small project a day, built and shipped fast.
+Day 2 of a 20-day vibecoding challenge: one small project a day, built and shipped fast.
 
 A private book club for four people: Ira, Isha, Samaa, Shanyu.
 
